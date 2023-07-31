@@ -1,10 +1,10 @@
-
 import 'package:distro_mate/ui/registration/verify_otp_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 
 import '../../../provider/provider/theme_provider.dart';
@@ -25,11 +25,8 @@ class CreateAccountScreen extends StatefulWidget {
 }
 
 class _CreateAccountScreenState extends State<CreateAccountScreen> {
-
-
   final _mobileTextField = TextEditingController();
   final AuthController _authController = Get.put(AuthController());
-
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +80,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       children: [
                         Center(
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 15.0, top: 25,bottom: 5),
+                            padding: const EdgeInsets.only(
+                                left: 15.0, top: 25, bottom: 5),
                             child: Text('Create New Account',
                                 style: TextStyle(
                                     fontSize: 18,
@@ -107,8 +105,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                           height: size.height * 0.03,
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(
-                              top: 5, left: 15),
+                          padding: const EdgeInsets.only(top: 5, left: 15),
                           child: CommonWidgets.commonText(
                               mText: 'Phone No.',
                               mSize: 14.0,
@@ -122,7 +119,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                               keyboardType: TextInputType.number,
                               textInputAction: TextInputAction.next,
                               maxLength: 10,
-                              style: Theme.of(context).textTheme.bodyText1,
+                              style: TextStyle(color: Colors.black),
                               obscureText: false,
                               decoration: InputDecorE().editBoxBorderGrey(
                                   context,
@@ -136,36 +133,51 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         SizedBox(
                           height: size.height * 0.04,
                         ),
-                        Center(
-                            child: Container(
-                              margin: EdgeInsets.symmetric(horizontal: 15),
-                              width: double.infinity,
-                              child: ElevatedButton.icon(
-                                style: ThemeManager.primaryButtonStyle(
-                                    context, 10, 10),
-                                onPressed: () {
-                                  if(_mobileTextField.text.isEmpty){
-                                    Get.snackbar('Alert', 'Please Enter Mobile Number',backgroundColor: Colors.white);
-                                  }else if(_mobileTextField.text.length<10){
-                                    Get.snackbar('Alert', 'Please Enter Valid Mobile Number',backgroundColor: Colors.white);
-                                  }else {
-                                    var data = {
-                                      "phone": _mobileTextField.text.toString(),
-                                    };
-                                    _authController.forgotPassword(data, callback);
-                                    Navigator.pushAndRemoveUntil(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                            const VerifyOTPScreen()),
-                                            (Route<dynamic> route) => false);
-                                  }
-                                },
-                                icon: const Icon(Icons.login),
-                                label:
-                                Text('Next'),
-                              ),
-                            )),
+                        Obx(
+                          () => !_authController.isLoading.value
+                              ? Center(
+                                  child: Container(
+                                  margin: EdgeInsets.symmetric(horizontal: 15),
+                                  width: double.infinity,
+                                  child: ElevatedButton.icon(
+                                    style: ThemeManager.primaryButtonStyle(
+                                        context, 10, 10),
+                                    onPressed: () {
+                                      if (_mobileTextField.text.isEmpty) {
+                                        Get.snackbar('Alert',
+                                            'Please Enter Mobile Number',
+                                            backgroundColor: Colors.white);
+                                      } else if (_mobileTextField.text.length <
+                                          10) {
+                                        Get.snackbar('Alert',
+                                            'Please Enter Valid Mobile Number',
+                                            backgroundColor: Colors.white);
+                                      } else {
+                                        var data = {
+                                          "phone":
+                                              _mobileTextField.text.toString(),
+                                        };
+                                        _authController
+                                            .registrationVerifyMobileNumber(
+                                                data, callback);
+                                      }
+                                    },
+                                    icon: const Icon(Icons.login),
+                                    label: Text('Next'),
+                                  ),
+                                ))
+                              : Center(
+                                  child: SizedBox(
+                                  height: 60,
+                                  child: LoadingIndicator(
+                                      indicatorType: Indicator.ballRotateChase,
+                                      colors: [ThemeManager.primaryColor],
+                                      strokeWidth: 2,
+                                      backgroundColor: Colors.white,
+                                      pathBackgroundColor:
+                                          ThemeManager.primaryColor),
+                                )),
+                        ),
                         SizedBox(
                           height: size.height * 0.04,
                         ),
@@ -211,17 +223,14 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     );
   }
 
-
-  callback(bool status,Map data) async{
+  callback(bool status, Map data) async {
     if (status == true) {
       ToastUtils.setToast(data['message']);
       Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(
-              builder: (context) =>
-              const LoginScreen()),
-              (Route<dynamic> route) => false);
-    }else{
+          MaterialPageRoute(builder: (context) =>  VerifyOTPScreen(data['data']['otp'],data['data']['user_id'])),
+          (Route<dynamic> route) => false);
+    } else {
       ToastUtils.setToast(data['message']);
     }
   }

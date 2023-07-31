@@ -1,4 +1,4 @@
-import 'package:distro_mate/ui/registration/register_screen.dart';
+import 'package:distro_mate/ui/registration/verify_otp_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -16,30 +16,18 @@ import '../../utils/helper/common_widgets.dart';
 import '../../utils/helper/theme_manager.dart';
 import '../../utils/toast_util.dart';
 import '../../widgets/input_decor.dart';
+import 'forgot_password_verify_otp_screen.dart';
 
-class VerifyOTPScreen extends StatefulWidget {
-  String otp;
-  String user_id;
-
-  VerifyOTPScreen(this.otp, this.user_id, {Key? key}) : super(key: key);
+class ForgotPasswordScreen extends StatefulWidget {
+  const ForgotPasswordScreen({Key? key}) : super(key: key);
 
   @override
-  State<VerifyOTPScreen> createState() => _VerifyOTPScreenState();
+  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
 }
 
-class _VerifyOTPScreenState extends State<VerifyOTPScreen> {
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+  final _mobileTextField = TextEditingController();
   final AuthController _authController = Get.put(AuthController());
-
-  var selectedValue = 'Cars';
-
-  final _otpTextField = TextEditingController();
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _otpTextField.text = widget.otp;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,23 +83,11 @@ class _VerifyOTPScreenState extends State<VerifyOTPScreen> {
                           child: Padding(
                             padding: const EdgeInsets.only(
                                 left: 15.0, top: 25, bottom: 5),
-                            child: Text('Enter OTP',
+                            child: Text('Forgot Password'.toUpperCase(),
                                 style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w900,
                                     color: Colors.black)),
-                          ),
-                        ),
-                        Center(
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 15.0),
-                            child: Text(
-                                'A Verification code has been sent to\n(+91XXXXXXXXXXX)',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.grey)),
                           ),
                         ),
                         SizedBox(
@@ -120,7 +96,7 @@ class _VerifyOTPScreenState extends State<VerifyOTPScreen> {
                         Padding(
                           padding: const EdgeInsets.only(top: 5, left: 15),
                           child: CommonWidgets.commonText(
-                              mText: 'OTP',
+                              mText: 'Phone No.',
                               mSize: 14.0,
                               mFontWeight: FontWeight.w600),
                         ),
@@ -128,16 +104,16 @@ class _VerifyOTPScreenState extends State<VerifyOTPScreen> {
                           margin: const EdgeInsets.only(
                               top: 10, left: 10, right: 10),
                           child: TextFormField(
-                              controller: _otpTextField,
+                              controller: _mobileTextField,
                               keyboardType: TextInputType.number,
-                              textInputAction: TextInputAction.next,
-                              maxLength: 4,
+                              textInputAction: TextInputAction.done,
+                              maxLength: 10,
                               style: TextStyle(color: Colors.black),
                               obscureText: false,
                               decoration: InputDecorE().editBoxBorderGrey(
                                   context,
                                   Icons.phone_android,
-                                  'XXXX',
+                                  'XXXXXXXXXX',
                                   Provider.of<DarkThemeProvider>(context)
                                           .darkTheme
                                       ? true
@@ -156,27 +132,27 @@ class _VerifyOTPScreenState extends State<VerifyOTPScreen> {
                                     style: ThemeManager.primaryButtonStyle(
                                         context, 10, 10),
                                     onPressed: () {
-                                      if (_otpTextField.text.isEmpty) {
-                                        Get.snackbar(
-                                            'Alert', 'Please Enter OTP',
+                                      if (_mobileTextField.text.isEmpty) {
+                                        Get.snackbar('Alert',
+                                            'Please Enter Mobile Number',
                                             backgroundColor: Colors.white);
-                                      } else if (_otpTextField.text.length <
-                                          4) {
-                                        Get.snackbar(
-                                            'Alert', 'Please Enter Valid OTP',
+                                      } else if (_mobileTextField.text.length <
+                                          10) {
+                                        Get.snackbar('Alert',
+                                            'Please Enter Valid Mobile Number',
                                             backgroundColor: Colors.white);
                                       } else {
                                         var data = {
-                                          "user_id": widget.user_id,
-                                          "otp": _otpTextField.text.toString(),
+                                          "phone":
+                                              _mobileTextField.text.toString(),
                                         };
                                         _authController
-                                            .registrationVerifyMobileNumberOTP(
+                                            .forgotPassword(
                                                 data, callback);
                                       }
                                     },
                                     icon: const Icon(Icons.login),
-                                    label: Text('Verify'),
+                                    label: Text('Next'),
                                   ),
                                 ))
                               : Center(
@@ -198,7 +174,7 @@ class _VerifyOTPScreenState extends State<VerifyOTPScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'Didn\'t receive the code?',
+                              'Already have an Account?',
                               style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
@@ -206,14 +182,14 @@ class _VerifyOTPScreenState extends State<VerifyOTPScreen> {
                             ),
                             GestureDetector(
                               onTap: () {
-                                /*  Navigator.push(
+                                Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            const LoginScreen()));*/
+                                            const LoginScreen()));
                               },
                               child: Text(
-                                '  Resend (30s)',
+                                '  Sign In',
                                 style: TextStyle(
                                     decoration: TextDecoration.underline,
                                     fontSize: 14,
@@ -238,14 +214,15 @@ class _VerifyOTPScreenState extends State<VerifyOTPScreen> {
 
   callback(bool status, Map data) async {
     if (status == true) {
-      ToastUtils.setToast(data['message']);
+      Get.snackbar('Alert',data['message'],backgroundColor: Colors.white);
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-              builder: (context) => RegisterScreen(data['data']['user_id'])),
+              builder: (context) => ForgotPasswordVerifyOTPScreen(
+                  data['data']['otp'], data['data']['user_id'])),
           (Route<dynamic> route) => false);
     } else {
-      ToastUtils.setToast(data['message']);
+      Get.snackbar('Alert',data['message'],backgroundColor: Colors.white);
     }
   }
 }

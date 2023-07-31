@@ -10,12 +10,14 @@ import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 import '../../provider/provider/theme_provider.dart';
+import '../../utils/helper/common_methods.dart';
 import '../../utils/helper/common_widgets.dart';
 import '../../utils/helper/pref_utils.dart';
 import '../../utils/helper/theme_manager.dart';
 import '../../widgets/input_decor.dart';
 import '../cart/cart_screen.dart';
 import '../products/product_list_screen.dart';
+import '../profile/profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -54,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CommonWidgets.commonText(
-                  mText: ' Hello, Aman',
+                  mText: ' Hello, ${PrefUtils.getCompanyName()}',
                   mFontWeight: FontWeight.w700,
                   mColor: Colors.black),
               Wrap(
@@ -65,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     size: 20,
                   ),
                   CommonWidgets.commonText(
-                      mText: ' Noida one, sector 62 Noida',
+                      mText: PrefUtils.getAddress(),
                       mSize: 12.0,
                       mFontWeight: FontWeight.w400,
                       mColor: Colors.black),
@@ -76,13 +78,13 @@ class _HomeScreenState extends State<HomeScreen> {
           leading: Bounce(
             duration: const Duration(milliseconds: 110),
             onPressed: () {
-              // Navigator.push(
-              //     context,
-              //     PageTransition(
-              //         child: ProfileScreen(),
-              //         type: PageTransitionType.fade,
-              //         duration: const Duration(milliseconds: 900),
-              //         reverseDuration: (const Duration(milliseconds: 900))));
+              Navigator.push(
+                  context,
+                  PageTransition(
+                      child: ProfileScreen(),
+                      type: PageTransitionType.fade,
+                      duration: const Duration(milliseconds: 900),
+                      reverseDuration: (const Duration(milliseconds: 900))));
             },
             child: Hero(
               tag: 'profile',
@@ -122,6 +124,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     height: 30,
                   ),
                 ),
+                const SizedBox(width: 10),
+                Bounce(
+                    duration: Duration(milliseconds: 110),
+                    onPressed: () {
+                      CommonMethods.showLogountDialog(context);
+                    },
+                    child: const Icon(Icons.power_settings_new,
+                        color: Colors.black)),
                 const SizedBox(
                   width: 20,
                 )

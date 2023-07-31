@@ -53,6 +53,80 @@ class AuthController extends GetxController {
     }
   }
 
+
+  Future registrationVerifyMobileNumberOTP(data, callback) async {
+    Map<String, String> headers = {
+      "Accept": "application/json",
+      "content-type": "application/json",
+    };
+
+    if (_networkManager.connectionType != 0) {
+      _isLoading.value = true;
+      update();
+      print(data);
+      http.Response response = await http.post(
+          Uri.parse(AppConstants.registration_verify_mobile_number_otp),
+          body: jsonEncode(data),
+          headers: headers);
+      print(response.body.toString());
+      Map? map;
+      if (response.statusCode == 200) {
+        map = jsonDecode(response.body);
+        print(response.body);
+        if (map!['code'] == '200') {
+          _isLoading.value = false;
+          callback(true, map);
+          update();
+        } else {
+          callback(false, '');
+          _isLoading.value = false;
+          update();
+        }
+      } else {
+        print(_networkManager.connectionType);
+        Get.snackbar(AppConstants.title, AppConstants.message,
+            backgroundColor: Colors.white);
+      }
+    }
+  }
+
+
+  Future registration(data, callback) async {
+    Map<String, String> headers = {
+      "Accept": "application/json",
+      "content-type": "application/json",
+    };
+
+    if (_networkManager.connectionType != 0) {
+      _isLoading.value = true;
+      update();
+      print(data);
+      http.Response response = await http.post(
+          Uri.parse(AppConstants.create_account),
+          body: jsonEncode(data),
+          headers: headers);
+      print(response.body.toString());
+      Map? map;
+      if (response.statusCode == 200) {
+        map = jsonDecode(response.body);
+        print(response.body);
+        if (map!['code'] == '200') {
+          _isLoading.value = false;
+          callback(true, map);
+          update();
+        } else {
+          callback(false, map);
+          _isLoading.value = false;
+          update();
+        }
+      } else {
+        print(_networkManager.connectionType);
+        Get.snackbar(AppConstants.title, AppConstants.message,
+            backgroundColor: Colors.white);
+      }
+    }
+  }
+
   Future login(data, callback) async {
     Map<String, String> headers = {
       "Accept": "application/json",
@@ -75,13 +149,13 @@ class AuthController extends GetxController {
         if (map!['code'] == '200') {
           _isLoading.value = false;
           try {
-            PrefUtils.setUserToken(map['data']['authorization_key']);
+            PrefUtils.setUserToken(map['data']['api_token']);
             PrefUtils.setUserID(map['data']['user_id']);
-            PrefUtils.setBankUSERID(map['data']['bank_id']);
-            PrefUtils.setNickName(map['data']['name']);
-            PrefUtils.setEmergencyMobile(map['data']['mobile']);
+            PrefUtils.setCompanyName(map['data']['company_name']);
+            PrefUtils.setEmergencyMobile(map['data']['phone']);
             PrefUtils.setEmail(map['data']['email']);
-            PrefUtils.setProfileImage(map['data']['image']);
+            PrefUtils.setAddress(map['data']['address']);
+            PrefUtils.setTypeofBusiness(map['data']['type_of_business']);
           } catch (e) {}
           callback(true, map);
           update();
@@ -94,7 +168,7 @@ class AuthController extends GetxController {
           update();
         }
       } else {
-        callback(false, '');
+        callback(false, map);
         _isLoading.value = false;
         update();
       }

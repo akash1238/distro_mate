@@ -79,6 +79,15 @@ class PrefUtils {
     return value ?? '';
   }
 
+  static String? setCompanyName(String userId) {
+    Prefs.prefs!.setString(SharedPrefsKeys.company_name, userId);
+  }
+
+  static String getCompanyName() {
+    final String? value = Prefs.prefs!.getString(SharedPrefsKeys.company_name);
+    return value ?? '';
+  }
+
   static String? setEmail(String email) {
     Prefs.prefs!.setString(SharedPrefsKeys.email, email);
   }
@@ -231,6 +240,15 @@ class PrefUtils {
 
   static String getAddress() {
     final String? value = Prefs.prefs!.getString('address');
+    return value ?? '';
+  }
+
+  static String? setTypeofBusiness(String address) {
+    Prefs.prefs!.setString('type_of_business', address);
+  }
+
+  static String getTypeofBusiness() {
+    final String? value = Prefs.prefs!.getString('type_of_business');
     return value ?? '';
   }
 

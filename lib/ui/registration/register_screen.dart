@@ -1,14 +1,15 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 
 import '../../../provider/provider/theme_provider.dart';
 import '../../../utils/helper/validation_utils.dart';
 import '../../../utils/localization/language_constrants.dart';
+import '../../controllers/auth_controller.dart';
 import '../../login/login_screen.dart';
 import '../../utils/helper/common_widgets.dart';
 import '../../utils/helper/theme_manager.dart';
@@ -16,25 +17,23 @@ import '../../utils/toast_util.dart';
 import '../../widgets/input_decor.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({Key? key}) : super(key: key);
+  String user_id;
+
+  RegisterScreen(this.user_id, {Key? key}) : super(key: key);
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-//  final AuthController _authController = Get.put(AuthController());
+  final AuthController _authController = Get.put(AuthController());
 
-  var selectedValue = 'Cars';
-
-  final _firstNameTextField = TextEditingController();
-  final _lastNameTextField = TextEditingController();
-  final _abnTextField = TextEditingController();
+  final _addressTextField = TextEditingController();
   final _companyNameTextField = TextEditingController();
   final _mobileTextField = TextEditingController();
   final _emailTextField = TextEditingController();
-  final _vehicleFleetTextField = TextEditingController();
-  final _driverFleetTextField = TextEditingController();
+  final _typeofbusinessTextField = TextEditingController();
+  final _passwordTextField = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +82,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       children: [
                         Center(
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 15.0, top: 25,bottom: 5),
+                            padding: const EdgeInsets.only(
+                                left: 15.0, top: 25, bottom: 5),
                             child: Text('Create New Account',
                                 style: TextStyle(
                                     fontSize: 18,
@@ -107,8 +107,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           height: size.height * 0.04,
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(
-                              top: 5, left: 15),
+                          padding: const EdgeInsets.only(top: 5, left: 15),
                           child: CommonWidgets.commonText(
                               mText: 'Company Name',
                               mSize: 14.0,
@@ -124,13 +123,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                               // validator: (input) => validateEmail(input!, context).toString() == "" ? null : validateEmail(input, context),
 
-                              style: Theme.of(context).textTheme.bodyText1,
+                              style: TextStyle(color: Colors.black),
                               decoration: InputDecorE().editBoxBorderGrey(
                                   context,
                                   Icons.account_balance,
                                   '',
                                   Provider.of<DarkThemeProvider>(context)
-                                      .darkTheme
+                                          .darkTheme
                                       ? true
                                       : false)),
                         ),
@@ -138,8 +137,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           height: size.height * 0.02,
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(
-                              top: 5, left: 15),
+                          padding: const EdgeInsets.only(top: 5, left: 15),
                           child: CommonWidgets.commonText(
                               mText: 'Address',
                               mSize: 14.0,
@@ -149,11 +147,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           margin: const EdgeInsets.only(
                               top: 10, left: 10, right: 10),
                           child: TextFormField(
-                              controller: _firstNameTextField,
+                              controller: _addressTextField,
                               keyboardType: TextInputType.text,
                               // validator: (input) => validateEmail(input!, context).toString() == "" ? null : validateEmail(input, context),
 
-                              style: Theme.of(context).textTheme.bodyText1,
+                              style: TextStyle(color: Colors.black),
                               textInputAction: TextInputAction.next,
                               decoration: InputDecorE().editBoxBorderGrey(
                                   context,
@@ -168,8 +166,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           height: size.height * 0.02,
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(
-                              top: 5, left: 15),
+                          padding: const EdgeInsets.only(top: 5, left: 15),
                           child: CommonWidgets.commonText(
                               mText: 'Phone No.',
                               mSize: 14.0,
@@ -183,7 +180,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               keyboardType: TextInputType.number,
                               textInputAction: TextInputAction.next,
                               maxLength: 10,
-                              style: Theme.of(context).textTheme.bodyText1,
+                              style: TextStyle(color: Colors.black),
                               obscureText: false,
                               decoration: InputDecorE().editBoxBorderGrey(
                                   context,
@@ -198,8 +195,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           height: size.height * 0.02,
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(
-                              top: 5, left: 15),
+                          padding: const EdgeInsets.only(top: 5, left: 15),
+                          child: CommonWidgets.commonText(
+                              mText: 'Email',
+                              mSize: 14.0,
+                              mFontWeight: FontWeight.w600),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(
+                              top: 10, left: 10, right: 10),
+                          child: TextFormField(
+                              controller: _emailTextField,
+                              keyboardType: TextInputType.emailAddress,
+                              textInputAction: TextInputAction.next,
+                              style: TextStyle(color: Colors.black),
+                              obscureText: false,
+                              decoration: InputDecorE().editBoxBorderGrey(
+                                  context,
+                                  Icons.mail,
+                                  '',
+                                  Provider.of<DarkThemeProvider>(context)
+                                          .darkTheme
+                                      ? true
+                                      : false)),
+                        ),
+                        SizedBox(
+                          height: size.height * 0.02,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 5, left: 15),
                           child: CommonWidgets.commonText(
                               mText: 'Type of Business',
                               mSize: 14.0,
@@ -209,92 +233,101 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           margin: const EdgeInsets.only(
                               top: 10, left: 10, right: 10),
                           child: TextFormField(
-                              controller: _lastNameTextField,
+                              controller: _typeofbusinessTextField,
                               keyboardType: TextInputType.text,
                               textInputAction: TextInputAction.next,
-                              // validator: (input) => validateEmail(input!, context).toString() == "" ? null : validateEmail(input, context),
-
-                              style: Theme.of(context).textTheme.bodyText1,
+                              style: TextStyle(color: Colors.black),
                               decoration: InputDecorE().editBoxBorderGrey(
                                   context,
                                   Icons.groups,
                                   '',
                                   Provider.of<DarkThemeProvider>(context)
-                                      .darkTheme
+                                          .darkTheme
+                                      ? true
+                                      : false)),
+                        ),
+                        SizedBox(
+                          height: size.height * 0.02,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 5, left: 15),
+                          child: CommonWidgets.commonText(
+                              mText: 'Password',
+                              mSize: 14.0,
+                              mFontWeight: FontWeight.w600),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(
+                              top: 10, left: 10, right: 10),
+                          child: TextFormField(
+                              controller: _passwordTextField,
+                              keyboardType: TextInputType.visiblePassword,
+                              textInputAction: TextInputAction.done,
+                              // validator: (input) => validateEmail(input!, context).toString() == "" ? null : validateEmail(input, context),
+
+                              style: TextStyle(color: Colors.black),
+                              decoration: InputDecorE().editBoxBorderGrey(
+                                  context,
+                                  Icons.lock,
+                                  '',
+                                  Provider.of<DarkThemeProvider>(context)
+                                          .darkTheme
                                       ? true
                                       : false)),
                         ),
                         const SizedBox(
                           height: 10,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 15.0, right: 15),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                  child: GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const RegisterScreen()));
-                                },
-                                child: Visibility(
-                                  visible: false,
-                                  child: Text(
-                                      'Register Now',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
-                                          color:
-                                              Theme.of(context).primaryColor)),
-                                ),
-                              )),
-                              GestureDetector(
-                                onTap: () {
-                                  // Navigator.push(
-                                  //     context,
-                                  //     MaterialPageRoute(
-                                  //         builder: (context) =>
-                                  //             const ForgotPasswordScreen()));
-                                },
-                                child: Text(
-                                    'Forgot Password?',
-                                    style: TextStyle(
-                                      decoration: TextDecoration.underline,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: Theme.of(context).primaryColor,
-                                    )),
-                              ),
-                            ],
+                        GestureDetector(
+                          onTap: () {
+                            // Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //         builder: (context) =>
+                            //             const ForgotPasswordScreen()));
+                          },
+                          child: Align(
+                            alignment: Alignment.topRight,
+                            child: Text('Forgot Password?',
+                                style: TextStyle(
+                                  decoration: TextDecoration.underline,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Theme.of(context).primaryColor,
+                                )),
                           ),
                         ),
                         const SizedBox(
                           height: 20,
                         ),
-                        Center(
-                          child: Container(
-                            margin: EdgeInsets.symmetric(horizontal: 15),
-                            width: double.infinity,
-                            child: ElevatedButton.icon(
-                                style: ThemeManager.primaryButtonStyle(
-                                    context, 10, 10),
-                                onPressed: () {
-                                  //_onSignInClick();
-                                   Navigator.pushAndRemoveUntil(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const LoginScreen()),
-                                      (Route<dynamic> route) => false);
-                                },
-                                icon: const Icon(Icons.login),
-                                label:
-                                    Text('Register Now'),
-                          ),
-                        )),
+                        Obx(
+                          () => !_authController.isLoading.value
+                              ? Center(
+                                  child: Container(
+                                  margin: EdgeInsets.symmetric(horizontal: 15),
+                                  width: double.infinity,
+                                  child: ElevatedButton.icon(
+                                    style: ThemeManager.primaryButtonStyle(
+                                        context, 10, 10),
+                                    onPressed: () {
+                                      _onSignUpClick();
+                                    },
+                                    icon: const Icon(Icons.login),
+                                    label: Text('Register Now'),
+                                  ),
+                                ))
+                              : Center(
+                                  child: SizedBox(
+                                  height: 60,
+                                  child: LoadingIndicator(
+                                      indicatorType: Indicator.ballRotateChase,
+                                      colors: [ThemeManager.primaryColor],
+                                      strokeWidth: 2,
+                                      backgroundColor: Colors.white,
+                                      pathBackgroundColor:
+                                          ThemeManager.primaryColor),
+                                )),
+                        ),
                         const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -338,55 +371,38 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  void _onSignInClick() {
-    if (_firstNameTextField.text.isEmpty) {
-      ToastUtils.setToast("Please enter First Name");
-    } else if (_lastNameTextField.text.isEmpty) {
-      ToastUtils.setToast("Please enter Last Name");
-    } else if (_companyNameTextField.text.toString().isEmpty) {
+  void _onSignUpClick() {
+    if (_companyNameTextField.text.isEmpty) {
       ToastUtils.setToast("Please enter Company Name");
-    } else if (_abnTextField.text.toString().isEmpty) {
-      ToastUtils.setToast("Please enter ABN/ACN");
-    } else if (_emailTextField.text.toString().isEmpty) {
-      ToastUtils.setToast("Please enter email");
-    } else if (!ValidationUtils.isValidEmail(_emailTextField.text.toString())) {
-      ToastUtils.setToast("Please enter valid email");
-    } else if (_mobileTextField.text.isEmpty) {
-      ToastUtils.setToast("Please enter mobile number");
-    } else if (_mobileTextField.text.length < 10) {
-      ToastUtils.setToast("Please enter valid mobile number");
-    }/* else if (selectedValue.isEmpty) {
-      ToastUtils.setToast("Please select vehicle type");
-    } */else if (_vehicleFleetTextField.text.isEmpty) {
-      ToastUtils.setToast("Please enter vehicle fleet");
-    } else if (_driverFleetTextField.text.isEmpty) {
-      ToastUtils.setToast("Please enter driver fleet");
-    }  else {
+    } else if (_addressTextField.text.isEmpty) {
+      ToastUtils.setToast("Please enter address");
+    } else if (_mobileTextField.text.toString().isEmpty) {
+      ToastUtils.setToast("Please enter phone number");
+    } else if (_typeofbusinessTextField.text.toString().isEmpty) {
+      ToastUtils.setToast("Please enter type of business");
+    } else if (_passwordTextField.text.toString().isEmpty) {
+      ToastUtils.setToast("Please enter type of business");
+    } else {
       var body = {
-        "username" : _emailTextField.text.toString(),
-        "first_name" : _firstNameTextField.text.toString(),
-        "last_name": _lastNameTextField.text.toString(),
-        "phone": _mobileTextField.text.toString(),
-        "dob" : "2010-11-3",
-        "company" : _companyNameTextField.text.toString(),
-        "abn" :_abnTextField.text.toString(),
-        "vehicles" : _vehicleFleetTextField.text.toString(),
-        "drivers" : _driverFleetTextField.text.toString(),
-        "fleetType" : selectedValue};
-     // _authController.registration(body, callback);
+        "user_id": widget.user_id,
+        "company_name": _companyNameTextField.text.toString(),
+        "address": _addressTextField.text.toString(),
+        "email": _emailTextField.text.toString(),
+        "type_of_business": _typeofbusinessTextField.text.toString(),
+        "password": _passwordTextField.text.toString(),
+      };
+      _authController.registration(body, callback);
     }
   }
 
-  callback(bool status,Map data) async{
+  callback(bool status, Map data) async {
     if (status == true) {
       ToastUtils.setToast(data['message']);
       Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(
-              builder: (context) =>
-              const LoginScreen()),
-              (Route<dynamic> route) => false);
-    }else{
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
+          (Route<dynamic> route) => false);
+    } else {
       ToastUtils.setToast(data['message']);
     }
   }

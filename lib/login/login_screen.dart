@@ -2,16 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 
 import '../../../provider/provider/theme_provider.dart';
 import '../../../utils/helper/validation_utils.dart';
 import '../../../utils/localization/language_constrants.dart';
+import '../controllers/auth_controller.dart';
 import '../ui/dashboard/dashboard_screen.dart';
 import '../ui/registration/create_account_screen.dart';
+import '../ui/registration/forgot_password_screen.dart';
 import '../ui/registration/register_screen.dart';
 import '../utils/helper/common_widgets.dart';
 import '../utils/helper/theme_manager.dart';
+import '../utils/helper/utils.dart';
 import '../utils/toast_util.dart';
 import '../widgets/input_decor.dart';
 
@@ -23,10 +27,10 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _emailTextField = TextEditingController();
+  final _phoneTextField = TextEditingController();
   final _passwordTextField = TextEditingController();
 
-  //final AuthController _authController = Get.put(AuthController());
+  final AuthController _authController = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {
@@ -92,8 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           height: size.height * 0.03,
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(
-                              top: 5, left: 15),
+                          padding: const EdgeInsets.only(top: 5, left: 15),
                           child: CommonWidgets.commonText(
                               mText: 'Phone No.',
                               mSize: 14.0,
@@ -103,11 +106,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           margin: const EdgeInsets.only(
                               top: 5, left: 10, right: 10),
                           child: TextFormField(
-                              controller: _emailTextField,
+                              controller: _phoneTextField,
                               keyboardType: TextInputType.number,
-                              // validator: (input) => validateEmail(input!, context).toString() == "" ? null : validateEmail(input, context),
-
-                              style: Theme.of(context).textTheme.bodyText1,
+                              textInputAction: TextInputAction.next,
+                              maxLength: 10,
+                              style: TextStyle(color: Colors.black),
                               decoration: InputDecorE().editBoxBorderGrey(
                                   context,
                                   Icons.phone_android,
@@ -121,8 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           height: size.height * 0.02,
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(
-                              top: 5, left: 15),
+                          padding: const EdgeInsets.only(top: 5, left: 15),
                           child: CommonWidgets.commonText(
                               mText: 'password',
                               mSize: 14.0,
@@ -135,12 +137,11 @@ class _LoginScreenState extends State<LoginScreen> {
                               obscureText: true,
                               controller: _passwordTextField,
                               keyboardType: TextInputType.visiblePassword,
-                              // validator: (input) => validateEmail(input!, context).toString() == "" ? null : validateEmail(input, context),
-                              style: Theme.of(context).textTheme.bodyText1,
+                              style: TextStyle(color: Colors.black),
                               decoration: InputDecorE().editBoxBorderGrey(
                                   context,
                                   Icons.lock,
-                                 'XXXXXXXXXX',
+                                  'XXXXXXXXXX',
                                   Provider.of<DarkThemeProvider>(context)
                                           .darkTheme
                                       ? true
@@ -155,13 +156,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             children: [
                               Expanded(
                                   child: GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const RegisterScreen()));
-                                },
+                                onTap: () {},
                                 child: Visibility(
                                   visible: false,
                                   child: Text('Register',
@@ -174,11 +169,11 @@ class _LoginScreenState extends State<LoginScreen> {
                               )),
                               GestureDetector(
                                 onTap: () {
-                                  // Navigator.push(
-                                  //     context,
-                                  //     MaterialPageRoute(
-                                  //         builder: (context) =>
-                                  //             const ForgotPasswordScreen()));
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const ForgotPasswordScreen()));
                                 },
                                 child: Text('Forgot Password?',
                                     style: TextStyle(
@@ -194,7 +189,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         SizedBox(
                           height: size.height * 0.04,
                         ),
-                        Center(
+                Obx(
+                      () => !_authController.isLoading.value
+                      ? Center(
                           child: Container(
                             margin: const EdgeInsets.symmetric(horizontal: 15),
                             width: double.infinity,
@@ -202,34 +199,24 @@ class _LoginScreenState extends State<LoginScreen> {
                                 style: ThemeManager.primaryButtonStyle(
                                     context, 10, 10),
                                 onPressed: () {
-
-                                  Navigator.pushAndRemoveUntil(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                          const DashboardScreen()),
-                                          (Route<dynamic> route) => false);
-                                 /* if (!ValidationUtils.isValidEmail(
-                                      _emailTextField.text.toString())) {
-                                    ToastUtils.setToast(
-                                        "Please enter valid email");
-                                  } else if (_passwordTextField.text.isEmpty) {
-                                    ToastUtils.setToast(
-                                        "Please enter password");
-                                  } else {
-                                    // var data = {
-                                    //   "username" : _emailTextField.text.toString(),
-                                    //   "password" : _passwordTextField.text.toString()};
-                                    // _authController.login(context,data, callback);
-
-
-                                  }*/
+                                  onLoginSubmit();
                                 },
                                 icon: const Icon(Icons.login),
                                 label:
                                     Text(getTranslated('sign_in', context)!)),
                           ),
-                        ),
+                        ) : Center(
+                          child: SizedBox(
+                            height: 60,
+                            child: LoadingIndicator(
+                                indicatorType: Indicator.ballRotateChase,
+                                colors: [ThemeManager.primaryColor],
+                                strokeWidth: 2,
+                                backgroundColor: Colors.white,
+                                pathBackgroundColor:
+                                ThemeManager.primaryColor),
+                          )),
+                ),
                         SizedBox(
                           height: size.height * 0.04,
                         ),
@@ -274,17 +261,35 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  void onLoginSubmit() {
+    if (_phoneTextField.text.isEmpty) {
+      Get.snackbar('Alert', 'Please Enter Mobile Number');
+    } else if (_phoneTextField.text.length < 10) {
+      Get.snackbar('Alert', 'Please Enter Valid Mobile Number');
+    } else if (_passwordTextField.text.isEmpty) {
+      Get.snackbar('Alert', 'Please Enter Paasword');
+    } else {
+      var data = {
+        "phone": _phoneTextField.text.toString(),
+        "password": _passwordTextField.text.toString(),
+        "device_type": 'Android',
+        "device_token": 'djgcdgc',
+      };
+      _authController.login(data, callback);
+    }
+  }
+
   callback(bool status, Map data) async {
     if (status == true) {
-      ToastUtils.setToast(data['message']);
-      // Navigator.pushAndRemoveUntil(
-      //     context,
-      //     MaterialPageRoute(
-      //         builder: (context) =>
-      //         const HomeScreen()),
-      //         (Route<dynamic> route) => false);
+      Get.snackbar('Alert',data['message'],backgroundColor: Colors.white);
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const DashboardScreen()),
+          (Route<dynamic> route) => false);
     } else {
-      ToastUtils.setToast(data['message']);
+      print('test');
+      Get.snackbar('Alert',data['message'],backgroundColor: Colors.white);
+      //ToastUtils.setToast(data['message']);
     }
   }
 }

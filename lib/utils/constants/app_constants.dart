@@ -6,17 +6,19 @@ class AppConstants {
   static String base_url = 'http://codegenit.work/distro_mate/public/api/';
   static String bank_base_url = 'https://au-api.basiq.io/';
   static String image_base_url = 'http://codegenit.work/distro_mate/public/';
-  static String registration_verify_mobile_number = base_url + 'receipts_house/public/api/v1/register';
-  static String login = base_url + 'receipts_house/public/api/v1/login';
-  static String forgot_password = base_url + 'receipts_house/public/api/v1/forgot-password';
-  static String forgot_password_otp_verify = base_url + 'receipts_house/public/api/v1/forgot-otp-verify';
-  static String forgot_password_update = base_url + 'receipts_house/public/api/v1/forgot-password-update';
+  static String registration_verify_mobile_number = base_url + 'user/register';
+  static String registration_verify_mobile_number_otp = base_url + 'user/verify-otp';
+  static String create_account = base_url + 'user/complete-profile';
+  static String login = base_url + 'user/login';
+  static String forgot_password = base_url + 'user/forgot-password';
+  static String forgot_password_otp_verify = base_url + 'user/forgot-verify-otp';
+  static String forgot_password_update = base_url + 'user/forgot-update-password';
   static String registration_otp_verify = base_url + 'receipts_house/public/api/v1/otpVerify';
   static String registration_resend_otp = base_url + 'receipts_house/public/api/v1/resendOtp';
   static String add_receipt = base_url + 'receipts_house/public/api/v1/store-receipt';
   static String receipt_list = base_url + 'receipts_house/public/api/v1/get-receipt';
-  static String getProfile = base_url + 'receipts_house/public/api/v1/get-profile';
-  static String updateProfile = base_url + 'receipts_house/public/api/v1/update-profile';
+  static String getProfile = base_url + 'user/get-profile';
+  static String updateProfile = base_url + 'user/update-profile';
 
   // Bank api
   static String generate_token = bank_base_url + 'token';
@@ -72,6 +74,7 @@ class SharedPrefsKeys {
   static const firstname = 'firstname';
   static const lastname = 'lastname';
   static const userId = 'userId';
+  static const company_name = 'company_name';
   static const email = 'email';
   static const phone = 'phone';
   static const birthday = 'birthday';

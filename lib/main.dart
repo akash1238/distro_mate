@@ -31,6 +31,7 @@ class DistroMate extends StatefulWidget {
 }
 
 class _DistroMateState extends State<DistroMate> {
+
   @override
   void initState() {
     super.initState();

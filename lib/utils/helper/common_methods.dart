@@ -19,6 +19,8 @@ import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../login/login_screen.dart';
+
 
 
 class CommonMethods {
@@ -175,7 +177,7 @@ class CommonMethods {
                     fontWeight: FontWeight.w700,
                     color: ThemeManager.colorBlack)),
           ),
-          content: Text('Are you sure you want to log out from \nReceipt House?',
+          content: Text('Are you sure you want to log out from \nDistro Mate?',
               textScaleFactor: 1.0,
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -219,15 +221,15 @@ class CommonMethods {
                                   color: ThemeManager.colorBlack)),
                           onPressed: () {
                             PrefUtils.logout();
-                            // Navigator.pushAndRemoveUntil(
-                            //     context,
-                            //     PageTransition(
-                            //         child: LoginScreen(),
-                            //         type: PageTransitionType.fade,
-                            //         duration: const Duration(milliseconds: 900),
-                            //         reverseDuration:
-                            //         (const Duration(milliseconds: 900))),
-                            //         (Route<dynamic> route) => false);
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                PageTransition(
+                                    child: LoginScreen(),
+                                    type: PageTransitionType.fade,
+                                    duration: const Duration(milliseconds: 900),
+                                    reverseDuration:
+                                    (const Duration(milliseconds: 900))),
+                                    (Route<dynamic> route) => false);
                           },
                         ),
                       ],

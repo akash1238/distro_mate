@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import '../intro/intro_screen.dart';
 import '../utils/helper/pref_utils.dart';
 import '../utils/helper/theme_manager.dart';
+import 'dashboard/dashboard_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -49,7 +50,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (PrefUtils.getUserToken().isEmpty) {
       Get.offAll(Introscreen());
     } else {
-    //  Get.offAll(DashboardScreen());
+     Get.offAll(DashboardScreen());
     }
   }
 }

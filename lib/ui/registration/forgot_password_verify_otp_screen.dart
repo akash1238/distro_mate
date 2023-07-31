@@ -1,3 +1,4 @@
+import 'package:distro_mate/ui/registration/password_update_screen.dart';
 import 'package:distro_mate/ui/registration/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,17 +18,17 @@ import '../../utils/helper/theme_manager.dart';
 import '../../utils/toast_util.dart';
 import '../../widgets/input_decor.dart';
 
-class VerifyOTPScreen extends StatefulWidget {
+class ForgotPasswordVerifyOTPScreen extends StatefulWidget {
   String otp;
   String user_id;
 
-  VerifyOTPScreen(this.otp, this.user_id, {Key? key}) : super(key: key);
+  ForgotPasswordVerifyOTPScreen(this.otp, this.user_id, {Key? key}) : super(key: key);
 
   @override
-  State<VerifyOTPScreen> createState() => _VerifyOTPScreenState();
+  State<ForgotPasswordVerifyOTPScreen> createState() => _ForgotPasswordVerifyOTPScreenState();
 }
 
-class _VerifyOTPScreenState extends State<VerifyOTPScreen> {
+class _ForgotPasswordVerifyOTPScreenState extends State<ForgotPasswordVerifyOTPScreen> {
   final AuthController _authController = Get.put(AuthController());
 
   var selectedValue = 'Cars';
@@ -171,7 +172,7 @@ class _VerifyOTPScreenState extends State<VerifyOTPScreen> {
                                           "otp": _otpTextField.text.toString(),
                                         };
                                         _authController
-                                            .registrationVerifyMobileNumberOTP(
+                                            .forgotPasswordOTPVerify(
                                                 data, callback);
                                       }
                                     },
@@ -242,7 +243,7 @@ class _VerifyOTPScreenState extends State<VerifyOTPScreen> {
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-              builder: (context) => RegisterScreen(data['data']['user_id'])),
+              builder: (context) => PasswordUpdateScreen(data['data']['user_id'])),
           (Route<dynamic> route) => false);
     } else {
       ToastUtils.setToast(data['message']);
